@@ -82,6 +82,31 @@ pipeline{
                }
             }
         }
+
+        // Stage for pushing artifacts to JFrog Artifactory
+        stage('Push to JFrog Artifactory') {
+            when { 
+                expression { params.action == 'create' } 
+            }
+            steps {
+                script {
+                    // Connect to JFrog Artifactory server
+                    def server = Artifactory.server 'Pushartifact'
+                    // Define the upload specification
+                    def uploadSpec = """{
+                        "files": [
+                            {
+                                "pattern": "target/*.jar",
+                                "target": "example-repo-local/"
+                            }
+                        ]
+                    }"""
+                    // Upload artifacts to JFrog Artifactory
+                    server.upload(uploadSpec)
+                }
+            }
+        }
+
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
