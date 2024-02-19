@@ -84,25 +84,34 @@ pipeline{
         }
 
         // Stage for pushing artifacts to JFrog Artifactory
-        stage('Push to JFrog Artifactory') {
-            when { 
-                expression { params.action == 'create' } 
-            }
-            steps {
-                script {
+        //stage('Push to JFrog Artifactory') {
+          //  when { 
+            //    expression { params.action == 'create' } 
+            //}
+            //steps {
+              //  script {
                     // Connect to JFrog Artifactory server
-                    def server = Artifactory.server 'Pushartifact'
+                //    def server = Artifactory.server 'Pushartifact'
                     // Define the upload specification
-                    def uploadSpec = """{
-                        "files": [
-                            {
-                                "pattern": "target/*.jar",
-                                "target": "example-repo-local/"
-                            }
-                        ]
-                    }"""
+                  //  def uploadSpec = """{
+                    //    "files": [
+                      //      {
+                        //        "pattern": "target/*.jar",
+                          //      "target": "example-repo-local/"
+                            //}
+                        //]
+                    //}"""
                     // Upload artifacts to JFrog Artifactory
-                    server.upload(uploadSpec)
+                    //server.upload(uploadSpec)
+                //}
+            //}
+        //}
+
+         stage ('Pushing Jfrog File'){
+          when { expression {  params.action == 'create' } }
+          steps{
+            script{
+                 sh 'curl -X PUT -u admin:password -T  /var/lib/jenkins/workspace/java-3.0/target/kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar "http://18.234.253.20:8082/artifactory/example-repo-local/kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar"'
                 }
             }
         }
